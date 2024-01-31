@@ -65,13 +65,13 @@ class UserMenuInfoCustomRepository(
                     meLongListHashMap.getOrDefault(subMenuAuthInfoResponse.menuId, MenuAuthManageDto.Response())
                 menuAuthInfoDto.menuId = subMenuAuthInfoResponse.menuId
                 menuAuthInfoDto.menuName = subMenuAuthInfoResponse.menuName
-                menuAuthInfoDto.showYn = subMenuAuthInfoResponse.getShowYn()
+                menuAuthInfoDto.showYn = subMenuAuthInfoResponse.getShowYnByPermissionNames()
                 meLongListHashMap[subMenuAuthInfoResponse.menuId] = menuAuthInfoDto
             } else {
                 val temp: MenuAuthManageDto.Response =
                     meLongListHashMap.getOrDefault(subMenuAuthInfoResponse.parentMenuId, MenuAuthManageDto.Response())
                 temp.subMenuAuthInfoList?.add(subMenuAuthInfoResponse)
-                subMenuAuthInfoResponse.showYn = subMenuAuthInfoResponse.getShowYn()
+                subMenuAuthInfoResponse.showYn = subMenuAuthInfoResponse.getShowYnByPermissionNames()
                 meLongListHashMap[subMenuAuthInfoResponse.menuId] = temp
             }
         }

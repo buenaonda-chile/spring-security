@@ -1,6 +1,6 @@
 package com.demo.springsecurity.entity
 
-import com.demo.springsecurity.config.GrantType
+import com.demo.springsecurity.config.security.GrantType
 import jakarta.persistence.*
 import java.io.Serializable
 import java.time.LocalDateTime

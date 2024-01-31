@@ -1,15 +1,18 @@
-package com.demo.springsecurity.config
+package com.demo.springsecurity.config.security
 
 import com.demo.springsecurity.entity.TbAdminUserInfo
 import org.springframework.security.core.userdetails.UserDetails
 import java.io.Serializable
 
 class AdminUser private constructor(
-    private val password : String,
+    private val password : String?,
     private val adminId : String,
     private val adminUserNo : Long,
     private val authorities : List<RequestGrantedAuthority>
 ): UserDetails, Serializable {
+
+    constructor(adminId: String, adminUserNo: Long, authorities: List<RequestGrantedAuthority>) : this(null, adminId, adminUserNo, authorities)
+
     companion object {
         fun of(tbAdminUserInfo: TbAdminUserInfo, authorities: List<RequestGrantedAuthority>) = AdminUser (
             adminUserNo = tbAdminUserInfo.adminUserNo,
@@ -22,7 +25,7 @@ class AdminUser private constructor(
         return authorities
     }
 
-    override fun getPassword(): String {
+    override fun getPassword(): String? {
         return password
     }
 

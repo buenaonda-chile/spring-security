@@ -1,4 +1,4 @@
-package com.demo.springsecurity.config
+package com.demo.springsecurity.config.security
 
 enum class ClaimType (val value : String){
     ADMIN_ID("adminId"),
