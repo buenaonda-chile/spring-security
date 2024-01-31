@@ -15,8 +15,16 @@ class TbAdminUserInfo(
     val department: String,
     val position: String,
     @Column(updatable = false, insertable = false) val authGroupId: Long? = null,
-    val lastLoginDt: LocalDateTime? = null,
+    lastLoginDt: LocalDateTime,
     @Column(updatable = false, insertable = false) val regDt: LocalDateTime,
     @Column(insertable = false) val updDt: LocalDateTime? = null,
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "authGroupId") val tbAuthGroup: TbAuthGroup
-)
+) {
+
+    var lastLoginDt: LocalDateTime = lastLoginDt
+        protected set
+    fun updateLastLoginDt() {
+        this.lastLoginDt = LocalDateTime.now()
+    }
+
+}

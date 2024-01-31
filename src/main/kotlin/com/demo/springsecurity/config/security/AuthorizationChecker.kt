@@ -1,4 +1,4 @@
-package com.demo.springsecurity.config
+package com.demo.springsecurity.config.security
 
 import io.micrometer.common.util.StringUtils
 import jakarta.servlet.http.HttpServletRequest
@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext
 import org.springframework.stereotype.Component
 import java.util.*
-import java.util.function.Supplier
 
 @Component
 class AuthorizationChecker {

@@ -1,6 +1,10 @@
 package com.demo.springsecurity.config
 
 import com.demo.springsecurity.common.exception.ExceptionCode
+import com.demo.springsecurity.config.jwt.JwtAuthenticationFilter
+import com.demo.springsecurity.config.jwt.JwtTokenProvider
+import com.demo.springsecurity.config.security.AuthorizationChecker
+import com.demo.springsecurity.config.security.CustomAuthenticationHandler
 import com.demo.springsecurity.dto.ErrorResponse
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
@@ -16,7 +20,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.AccessDeniedHandler
@@ -54,6 +57,7 @@ class SecurityConfig(
 
         http.authorizeHttpRequests { request ->
             request.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .requestMatchers("/h2-console/**", "/").permitAll()
                 .anyRequest().access(this::isGranted)
         }
 
@@ -109,9 +113,6 @@ class SecurityConfig(
             log.info("[END] customLogoutHandler")
         }
     }
-
-    @Bean
-    fun passwordEncoder() = BCryptPasswordEncoder()
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {

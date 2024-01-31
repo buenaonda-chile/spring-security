@@ -1,4 +1,4 @@
-package com.demo.springsecurity.config
+package com.demo.springsecurity.config.security
 
 import org.springframework.security.core.GrantedAuthority
 
@@ -21,6 +21,5 @@ data class RequestGrantedAuthority(
 
             return RequestGrantedAuthority(grantedDomain, grant)
         }
-
     }
 }

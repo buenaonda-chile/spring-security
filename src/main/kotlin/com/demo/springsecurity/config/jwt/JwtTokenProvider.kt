@@ -1,13 +1,17 @@
-package com.demo.springsecurity.config
+package com.demo.springsecurity.config.jwt
 
+import com.demo.springsecurity.config.security.AdminUser
+import com.demo.springsecurity.config.security.ClaimType
+import com.demo.springsecurity.config.security.RequestGrantedAuthority
+import com.demo.springsecurity.service.LoginService
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import jakarta.servlet.http.HttpServletRequest
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication
 import org.bouncycastle.util.io.pem.PemReader
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ClassPathResource
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Component
 import org.springframework.util.StreamUtils
 import java.io.StringReader
@@ -21,8 +25,7 @@ import java.util.*
 
 @Component
 class JwtTokenProvider {
-    @Value("\${jwt.secret}")
-    private lateinit var jwtSecret: String
+    @Autowired private lateinit var loginService: LoginService
     private val _AUTH_HEADER = "Authorization"
     private val accessExpirationInterval = 60 * 60 * 1000L
     private val kf = KeyFactory.getInstance("EC");
@@ -54,6 +57,14 @@ class JwtTokenProvider {
                 ).readPemObject().content
             )
         ) as ECPublicKey)
+
+    fun constructJWK(): String {
+        return String.format(
+            "{\"kty\":\"EC\",\"crv\":\"P-256\",\"x\":\"%s\",\"y\":\"%s\"}",
+            Base64.getUrlEncoder().withoutPadding().encodeToString(publicKey.w.affineX.toByteArray()),
+            Base64.getUrlEncoder().withoutPadding().encodeToString(publicKey.w.affineY.toByteArray())
+        )
+    }
 
     fun generateToken(adminUser: AdminUser): String {
         val claims: Claims = Jwts.claims()
@@ -89,16 +100,19 @@ class JwtTokenProvider {
             .noneMatch { claimType -> claims.get(claimType.name) == null }
     }
 
-//    fun getAuthentication(token: String): Authentication {
-//        val claims: Claims = Jwts
-//            .parser()
-//            .setSigningKey(publicKey)
-//            .parseClaimsJws(token)
-//            .body
-//
-//        val adminId: String = claims.get(ClaimType.ADMIN_ID.value, String::class.java)
-//        val adminUserNo: Long = claims.get(ClaimType.ADMIN_USER_NO.value, Double::class.java).toLong()
-//
-////        val authorities: List<RequestGrantedAuthority> =
-//    }
+    fun getAuthentication(token: String): UsernamePasswordAuthenticationToken {
+        val claims: Claims = Jwts
+            .parser()
+            .setSigningKey(publicKey)
+            .parseClaimsJws(token)
+            .body
+
+        val adminId: String = claims.get(ClaimType.ADMIN_ID.value, String::class.java)
+        val adminUserNo: Long = claims.get(ClaimType.ADMIN_USER_NO.value, Double::class.java).toLong()
+
+        val authorities: List<RequestGrantedAuthority> = loginService.getAuthorityList(adminId)
+        val principal = AdminUser(adminId, adminUserNo, authorities)
+
+        return UsernamePasswordAuthenticationToken(principal, null, authorities)
+    }
 }

@@ -1,7 +1,6 @@
 package com.demo.springsecurity.common
 
-import com.demo.springsecurity.config.GrantType
-import java.lang.annotation.ElementType
+import com.demo.springsecurity.config.security.GrantType
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)

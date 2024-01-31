@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AdminUserInfoRepository: JpaRepository<TbAdminUserInfo, Long> {
-    fun findByAdminId(id: String) : TbAdminUserInfo
+    fun findByAdminId(id: String) : TbAdminUserInfo?
 }
